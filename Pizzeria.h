@@ -17,12 +17,11 @@ private:
     unsigned short salt = 0;
     unsigned short cheese = 0;
     unsigned short priceOnSize;
-    unsigned short price;
+    unsigned short price = 0;
     Pizza(string name, string description, unsigned short priceOnSize)
     {
         this->name = move(name);
         this->description = move(description);
-        this->size = size;
         this->priceOnSize = priceOnSize;
     }
 
@@ -30,7 +29,7 @@ private:
     {
         if (!(size >= 25 && size <= 40 && size % 5 == 0))
             throw logic_error("Неверный размер пиццы. Пожалуйста, укажите один из вариантов: 25, 30, 35, 40.");
-        return priceOnSize * size;
+        return size;
     }
 
 protected:
@@ -50,28 +49,42 @@ public:
     static Pizza createVirginia()
     {
         return Pizza(pizzas[1], "Острое блюдо. Соус томатный, острый соус, сыр моцарелла, колбаски охотничьи, перец болгарский, кукуруза, томаты, бекон.",
-                     20);
+                     22);
     }
 
     virtual void chooseSizeOfPizza(unsigned short size)
     {
         this->size = checkSize(size);
+        price += size * priceOnSize;
     }
 
-    virtual void addSalt(unsigned short amt)
+    virtual void addSalt(int amt)
     {
+        if (amt < 0 || amt > 100)
+            throw logic_error("Количество соли не может быть отрицательным или слишком большим!");
         salt += amt;
     }
 
-    virtual void addCheese(unsigned short amt)
+    virtual void addCheese(int amt)
     {
+        if (amt < 0 || amt > 100)
+            throw logic_error("Количество сыра не может быть отрицательным или слишком большим!");
         cheese += amt;
-        price += 20 * amt;
+        price += 10 * amt;
     }
 
     virtual void print()
     {
+        cout << name << endl;
+        cout << description << endl;
+        cout << "соли(" << salt << "), сыра(" << cheese << ')' << endl;
+        cout << "размер - " << size << endl;
+        cout << "----- Стоимость пиццы = " << price << " -----" << endl;
+    }
 
+    int getPrice()
+    {
+        return price;
     }
 
     virtual void getListOfPizzas() {};
@@ -85,17 +98,21 @@ class Order : public Pizza
 private:
     vector<Pizza> order;
 
-    void addSalt(unsigned short amt) override {}
-    void addCheese(unsigned short amt) override {}
-
 public:
     Order() = default;
     //~Order() override = default;
 
     void print() override
     {
-        for (auto & pizza : order)
-            pizza.print();
+        int finalPrice = 0;
+        for (int i = 0; i < order.size(); i++)
+        {
+            cout << i << "  ";
+            order[i].print();
+
+            finalPrice += order[i].getPrice();
+        }
+        cout << "---------- Итоговая стоимость заказа равна " << finalPrice << " ----------" << endl;
     }
 
     void getListOfPizzas() override
@@ -114,7 +131,7 @@ public:
 
     void addToOrder(int num)
     {
-        if (num < 0 || num > pizzas.size())
+        if (num < 1 || num > pizzas.size())
             throw logic_error("Неверная цифра!");
 
         switch (num)
@@ -127,5 +144,16 @@ public:
                 break;
         }
     }
+
+    void addSalt(int amt) override
+    {
+        order.back().addSalt(amt);
+    }
+
+    void addCheese(int amt) override
+    {
+        order.back().addCheese(amt);
+    }
+
 
 };
