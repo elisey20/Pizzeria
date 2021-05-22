@@ -52,6 +52,24 @@ public:
                      22);
     }
 
+    static Pizza createVeg()
+    {
+        return Pizza(pizzas[2], "Шампиньоны, свежие томаты, перец сладкий, брокколи, сыр Моцарелла, томатный соус",
+                     18);
+    }
+
+    static Pizza createMec()
+    {
+        return Pizza(pizzas[3], "Мясной фарш, перец сладкий, кукуруза, лук, свежие томаты, перец красный молотый, сыр Моцарелла, томатный соус",
+                     21);
+    }
+
+    static Pizza createMon()
+    {
+        return Pizza(pizzas[4], "Курица, бекон, свежие томаты, лук репчатый, шампиньоны, сыр Моцарелла, томатный соус",
+                     23);
+    }
+
     virtual void chooseSizeOfPizza(unsigned short size)
     {
         this->size = checkSize(size);
@@ -91,7 +109,7 @@ public:
 
 };
 
-const vector<string> Pizza::pizzas = {"Браво", "Вирджиния"};
+const vector<string> Pizza::pizzas = {"Браво", "Вирджиния", "Вегетарианская", "Мексиканская", "Монако"};
 
 class Order : public Pizza
 {
@@ -107,7 +125,7 @@ public:
         int finalPrice = 0;
         for (int i = 0; i < order.size(); i++)
         {
-            cout << i << "  ";
+            cout << i + 1 << "  ";
             order[i].print();
 
             finalPrice += order[i].getPrice();
@@ -141,6 +159,15 @@ public:
                 break;
             case 2:
                 order.push_back(Pizza::createVirginia());
+                break;
+            case 3:
+                order.push_back(Pizza::createVeg());
+                break;
+            case 4:
+                order.push_back(Pizza::createMec());
+                break;
+            case 5:
+                order.push_back(Pizza::createMon());
                 break;
         }
     }
